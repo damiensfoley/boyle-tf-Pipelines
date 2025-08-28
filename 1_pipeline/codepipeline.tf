@@ -107,6 +107,25 @@ resource "aws_codepipeline" "demo" {
     }
   }
 
+stage {
+  name = "Source"
+  action {
+    name             = "Source"
+    category         = "Source"
+    owner            = "ThirdParty"
+    provider         = "GitHub"
+    version          = "1"
+    output_artifacts = ["SourceArtifact"]
+    configuration = {
+      Owner      = var.github_owner
+      Repo       = var.github_repo
+      Branch     = var.github_branch
+      OAuthToken = var.github_token   
+    }
+  }
+}
+
+
   stage {
     name = "Terraform-Project-Testing"
 
