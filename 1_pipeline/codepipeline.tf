@@ -1,7 +1,7 @@
 resource "aws_iam_role" "codepipeline" {
   description = "CodePipeline Service Role - Managed by Terraform"
   tags        = local.common_tags
-  name="df-tf-codepipeline-role"
+  name        = "df-tf-codepipeline-role"
   assume_role_policy = jsonencode(
     {
       "Version" : "2012-10-17",
@@ -20,7 +20,7 @@ resource "aws_iam_role" "codepipeline" {
 
 resource "aws_iam_role_policy" "codepipeline" {
   role = aws_iam_role.codepipeline.id
-  name="df-tf-codepipeline-policy"
+  name = "df-tf-codepipeline-policy"
   policy = jsonencode(
     {
       "Version" : "2012-10-17",
@@ -82,7 +82,6 @@ resource "aws_iam_role_policy" "codepipeline" {
             aws_codebuild_project.opa.arn,
             aws_codebuild_project.terrascan.arn,
             aws_codebuild_project.terratest.arn,
-            aws_codebuild_project.infracost.arn,
             aws_codebuild_project.tf_apply.arn,
             aws_codebuild_project.tf_destroy.arn
           ]
@@ -92,7 +91,7 @@ resource "aws_iam_role_policy" "codepipeline" {
   )
 }
 
-# CodePipeline
+# First CodePipeline Resource: network-apply
 
 resource "aws_codepipeline" "network-apply" {
   name     = "${local.prefix}-network-apply"
@@ -108,7 +107,7 @@ resource "aws_codepipeline" "network-apply" {
     name = "Clone"
 
     action {
-      name             = "NetworkFoundationsSource"
+      name             = "TestingPipelineForNetwork"
       category         = "Source"
       owner            = "AWS"
       provider         = "CodeStarSourceConnection"
@@ -117,9 +116,9 @@ resource "aws_codepipeline" "network-apply" {
       run_order        = "1"
 
       configuration = {
-        BranchName           = "${var.listen_branch_name}"
-        FullRepositoryId     = "${var.network_repository_name}"
-        ConnectionArn        = "${var.ConnectionArn}"
+        BranchName           = var.listen_branch_name
+        FullRepositoryId     = var.repository_name
+        ConnectionArn        = var.ConnectionArn
         OutputArtifactFormat = "CODE_ZIP"
       }
     }
@@ -129,95 +128,75 @@ resource "aws_codepipeline" "network-apply" {
     name = "Terraform-Project-Testing"
 
     action {
-      run_order        = 1
-      name             = "tflint"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
+      run_order       = 1
+      name            = "tflint"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
       input_artifacts  = ["CodeWorkspace"]
       output_artifacts = []
-      version          = "1"
-
+      version         = "1"
       configuration = {
         ProjectName = aws_codebuild_project.tflint.name
       }
     }
 
     action {
-      run_order        = 1
-      name             = "checkov"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
+      run_order       = 1
+      name            = "checkov"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
       input_artifacts  = ["CodeWorkspace"]
       output_artifacts = []
-      version          = "1"
-
+      version         = "1"
       configuration = {
         ProjectName = aws_codebuild_project.checkov.name
       }
     }
 
     action {
-      run_order        = 1
-      name             = "opa"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
+      run_order       = 1
+      name            = "opa"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
       input_artifacts  = ["CodeWorkspace"]
       output_artifacts = []
-      version          = "1"
-
+      version         = "1"
       configuration = {
         ProjectName = aws_codebuild_project.opa.name
       }
     }
 
     action {
-      run_order        = 1
-      name             = "terrascan"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
+      run_order       = 1
+      name            = "terrascan"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
       input_artifacts  = ["CodeWorkspace"]
       output_artifacts = []
-      version          = "1"
-
+      version         = "1"
       configuration = {
         ProjectName = aws_codebuild_project.terrascan.name
       }
     }
 
     action {
-      run_order        = 2
-      name             = "terratest"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
+      run_order       = 2
+      name            = "terratest"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
       input_artifacts  = ["CodeWorkspace"]
       output_artifacts = []
-      version          = "1"
-
+      version         = "1"
       configuration = {
         ProjectName = aws_codebuild_project.terratest.name
       }
     }
-
-    action {
-      run_order        = 1
-      name             = "infracost"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      input_artifacts  = ["CodeWorkspace"]
-      output_artifacts = []
-      version          = "1"
-
-      configuration = {
-        ProjectName = aws_codebuild_project.infracost.name
-      }
-    }
-  }
+  }  # Closing brace for Terraform-Project-Testing stage
 
   stage {
     name = "Manual-Approval"
@@ -236,173 +215,14 @@ resource "aws_codepipeline" "network-apply" {
     name = "Deploy"
 
     action {
-      run_order        = 1
-      name             = "terraform-apply"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
+      run_order       = 1
+      name            = "terraform-apply"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
       input_artifacts  = ["CodeWorkspace"]
       output_artifacts = []
-      version          = "1"
-
-      configuration = {
-        ProjectName = aws_codebuild_project.tf_apply.name
-      }
-    }
-  }
-}
-
-resource "aws_codepipeline" "rds-apply" {
-  name     = "${local.prefix}-rds-apply"
-  role_arn = aws_iam_role.codepipeline.arn
-  tags     = local.common_tags
-
-  artifact_store {
-    location = aws_s3_bucket.df-tf-artifacts.id
-    type     = "S3"
-  }
-
-  stage {
-    name = "Clone"
-
-    action {
-      name             = "RDSSource"
-      category         = "Source"
-      owner            = "AWS"
-      provider         = "CodeStarSourceConnection"
-      version          = "1"
-      output_artifacts = ["CodeWorkspace"]
-      run_order        = "1"
-
-      configuration = {
-        BranchName           = "${var.listen_branch_name}"
-        FullRepositoryId     = "${var.rds_repository_name}"
-        ConnectionArn        = "${var.ConnectionArn}"
-        OutputArtifactFormat = "CODE_ZIP"
-      }
-    }
-  }
-
-  stage {
-    name = "Terraform-Project-Testing"
-
-    action {
-      run_order        = 1
-      name             = "tflint"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      input_artifacts  = ["CodeWorkspace"]
-      output_artifacts = []
-      version          = "1"
-
-      configuration = {
-        ProjectName = aws_codebuild_project.tflint.name
-      }
-    }
-
-    action {
-      run_order        = 1
-      name             = "checkov"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      input_artifacts  = ["CodeWorkspace"]
-      output_artifacts = []
-      version          = "1"
-
-      configuration = {
-        ProjectName = aws_codebuild_project.checkov.name
-      }
-    }
-
-    action {
-      run_order        = 1
-      name             = "opa"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      input_artifacts  = ["CodeWorkspace"]
-      output_artifacts = []
-      version          = "1"
-
-      configuration = {
-        ProjectName = aws_codebuild_project.opa.name
-      }
-    }
-
-    action {
-      run_order        = 1
-      name             = "terrascan"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      input_artifacts  = ["CodeWorkspace"]
-      output_artifacts = []
-      version          = "1"
-
-      configuration = {
-        ProjectName = aws_codebuild_project.terrascan.name
-      }
-    }
-
-    action {
-      run_order        = 2
-      name             = "terratest"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      input_artifacts  = ["CodeWorkspace"]
-      output_artifacts = []
-      version          = "1"
-
-      configuration = {
-        ProjectName = aws_codebuild_project.terratest.name
-      }
-    }
-
-    action {
-      run_order        = 1
-      name             = "infracost"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      input_artifacts  = ["CodeWorkspace"]
-      output_artifacts = []
-      version          = "1"
-
-      configuration = {
-        ProjectName = aws_codebuild_project.infracost.name
-      }
-    }
-  }
-
-  stage {
-    name = "Manual-Approval"
-
-    action {
-      run_order = 1
-      name      = "DevOps-Lead-Approval"
-      category  = "Approval"
-      owner     = "AWS"
-      provider  = "Manual"
-      version   = "1"
-    }
-  }
-
-  stage {
-    name = "Deploy"
-
-    action {
-      run_order        = 1
-      name             = "terraform-apply"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      input_artifacts  = ["CodeWorkspace"]
-      output_artifacts = []
-      version          = "1"
-
+      version         = "1"
       configuration = {
         ProjectName = aws_codebuild_project.tf_apply.name
       }

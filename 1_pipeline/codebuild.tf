@@ -171,34 +171,6 @@ resource "aws_codebuild_project" "terratest" {
   }
 }
 
-resource "aws_codebuild_project" "infracost" {
-  name         = "${local.prefix}-infracost"
-  description  = "Managed using Terraform"
-  service_role = aws_iam_role.codebuild.arn
-  tags         = local.common_tags
-
-  artifacts {
-    type = "CODEPIPELINE"
-  }
-
-  environment {
-    compute_type = "BUILD_GENERAL1_SMALL"
-    image        = "aws/codebuild/standard:5.0"
-    type         = "LINUX_CONTAINER"
-
-    environment_variable {
-      name  = "INFRACOST_API_KEY_SSM_PARAM_NAME"
-      value = "${local.ssm_prefix}/infracost_api_key"
-      type  = "PARAMETER_STORE"
-    }
-  }
-
-  source {
-    type      = "CODEPIPELINE"
-    buildspec = "buildspec-infracost.yml"
-  }
-}
-
 resource "aws_codebuild_project" "tf_apply" {
   name         = "${local.prefix}-tf-apply"
   description  = "Managed using Terraform"

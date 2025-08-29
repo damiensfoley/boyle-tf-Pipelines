@@ -4,11 +4,9 @@ variable "repository_name" {
 }
 
 variable "github_owner" {} 
-variable "github_token" {}
+# variable "github_token" {}
 
 variable "listen_branch_name" {
-  default     = "main"
-  description = "CodeCommit branch name for CodePipeline builds"
 }
 
 variable "aws_region" {}

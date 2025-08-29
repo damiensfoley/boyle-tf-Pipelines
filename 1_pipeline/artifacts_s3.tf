@@ -1,11 +1,6 @@
 resource "aws_s3_bucket" "df-tf-artifacts" {
-  bucket = "${local.prefix}-s3"
+  bucket = "${local.prefix}-artefacts-s3"
   force_destroy = true
-}
-
-resource "aws_s3_bucket_acl" "artifacts_acl" {
-  bucket = aws_s3_bucket.df-tf-artifacts.id
-  acl    = "private"
 }
 
 resource "aws_s3_bucket_versioning" "artifacts" {

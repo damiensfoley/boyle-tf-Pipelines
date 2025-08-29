@@ -9,7 +9,7 @@ output "dynamodb-lock-table-ssm-parameter" {
 }
 
 output "s3-state-bucket" {
-    value = aws_s3_bucket.df-terraform-remote-state-s3.id
+    value = aws_s3_bucket.df-tf-remote-state-s3.id
     description = "S3 bucket for storing Terraform state"
 }
 

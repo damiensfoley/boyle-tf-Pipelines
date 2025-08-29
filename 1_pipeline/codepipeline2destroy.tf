@@ -23,7 +23,7 @@ resource "aws_codepipeline" "network-destroy" {
 
       configuration = {
         BranchName           = "${var.listen_branch_name}"
-        FullRepositoryId     = "${var.rds_repository_name}"
+        FullRepositoryId     = "${var.repository_name}"
         ConnectionArn        = "${var.ConnectionArn}"
         OutputArtifactFormat = "CODE_ZIP"
         DetectChanges = "false"
@@ -88,7 +88,7 @@ resource "aws_codepipeline" "rds-destroy" {
 
       configuration = {
         BranchName           = "${var.listen_branch_name}"
-        FullRepositoryId     = "${var.rds_repository_name}"
+        FullRepositoryId     = "${var.repository_name}"
         ConnectionArn        = "${var.ConnectionArn}"
         OutputArtifactFormat = "CODE_ZIP"
         DetectChanges = "false"
