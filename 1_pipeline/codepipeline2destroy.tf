@@ -1,6 +1,4 @@
 # IAM
-
-
 resource "aws_codepipeline" "network-destroy" {
   name     = "${local.prefix}-network-destroy"
   role_arn = aws_iam_role.codepipeline.arn

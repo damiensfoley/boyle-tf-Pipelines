@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-data "aws_caller_identity" "current" {}
-
-data "aws_ssm_parameter" "remote_state_bucket" {
-  name = "/DF/terraform/df-tf-remote-state-bucket"
-}
-
-data "aws_ssm_parameter" "locks_table_arn" {
-  name = "${local.ssm_prefix}/df-tf-locks-table-arn"
-}
-=======
 data "aws_caller_identity" "current" {}
 
 data "aws_ssm_parameter" "remote_state_bucket" {
@@ -25,4 +14,3 @@ resource "aws_ssm_parameter" "infracost_api_key" {
   value = var.infracost_key_api
 }
 #test change
->>>>>>> a0f44d0591a2dec80898715bdb60e39940eb56b5
