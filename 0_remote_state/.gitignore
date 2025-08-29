@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-# Local .terraform directories
-**/.terraform/*
-/examples/*
-/rds_secret_rotation/*
-# Terraform lockfile
-.terraform.lock.hcl
-=======
 terraform.tfvars
 .terrafrom
 .terraform/providers/registry.terraform.io/hashicorp/aws/4.2.0/windows_amd64/terraform-provider-aws_v4.2.0_x5.exe
@@ -13,7 +5,6 @@ terraform.tfstate
 terraform.tfstate.backup
 # Local .terraform directories
 **/.terraform/*
->>>>>>> a0f44d0591a2dec80898715bdb60e39940eb56b5
 
 # .tfstate files
 *.tfstate
@@ -21,15 +12,6 @@ terraform.tfstate.backup
 
 # Crash log files
 crash.log
-<<<<<<< HEAD
-
-# Exclude all .tfvars files, which are likely to contain sentitive data, such as
-# password, private keys, and other secrets. These should not be part of version
-# control as they are data points which are potentially sensitive and subject
-# to change depending on the environment.
-*.tfvars
-terraform.tfvars
-=======
 crash.*.log
 
 # Exclude all .tfvars files, which are likely to contain sensitive data, such as
@@ -39,7 +21,6 @@ crash.*.log
 *.tfvars
 *.tfvars.json
 
->>>>>>> a0f44d0591a2dec80898715bdb60e39940eb56b5
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in
 override.tf
@@ -47,30 +28,6 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 
-<<<<<<< HEAD
-# Ignore CLI configuration files
-.terraformrc
-terraform.rc
-# Local .terraform directories
-.terraform/
-
-# Terraform state files
-*.tfstate
-*.tfstate.*
-
-# Crash logs
-crash.log
-
-# Override files
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
-
-# Sensitive files
-.terraformrc
-terraform.rc
-=======
 # Ignore transient lock info files created by terraform apply
 .terraform.tfstate.lock.info
 .terraform.lock.hcl
@@ -83,4 +40,3 @@ terraform.rc
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
->>>>>>> a0f44d0591a2dec80898715bdb60e39940eb56b5
