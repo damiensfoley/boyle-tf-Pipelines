@@ -1,10 +1,10 @@
-data "aws_secretsmanager_secret" "aws_access_keys" {
-  name = "aws-access-keys"
-}
+# data "aws_secretsmanager_secret" "aws_access_keys" {
+#   name = "aws-access-keys"
+# }
 
-data "aws_secretsmanager_secret_version" "aws_access_keys_current" {
-  secret_id = data.aws_secretsmanager_secret.aws_access_keys.id
-}
+# data "aws_secretsmanager_secret_version" "aws_access_keys_current" {
+#   secret_id = data.aws_secretsmanager_secret.aws_access_keys.id
+# }
 
 terraform {
   backend "s3" {
@@ -17,7 +17,7 @@ terraform {
 }
 
 locals {
-access_keys = jsondecode(data.aws_secretsmanager_secret_version.aws_access_keys_current.secret_string)
+# access_keys = jsondecode(data.aws_secretsmanager_secret_version.aws_access_keys_current.secret_string)
 aws_region  = "eu-west-1"
     prefix      = "df-tf"
     ssm_prefix  = "/terraform"
