@@ -1,4 +1,10 @@
 variable "aws_region" {}
-variable "aws_secret_key" {}
+variable "aws_secret_key" {
+    type=string
+    sensitive=true
+}
 # variable "aws_session_token" {}
-variable "aws_access_key" {}
+variable "aws_access_key" {
+    type=string
+    sensitive=true
+}
