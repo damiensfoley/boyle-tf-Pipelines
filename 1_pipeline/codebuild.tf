@@ -44,6 +44,15 @@ resource "aws_iam_role_policy" "codebuild" {
           ],
           "Resource" : data.aws_ssm_parameter.locks_table_arn.value
         },
+                # ---- THIS IS THE NEW BLOCK ADDED -----
+        {
+          "Effect" : "Allow",
+          "Action" : [
+            "secretsmanager:GetSecretValue"
+          ],
+          "Resource" : "arn:aws:secretsmanager:eu-west-1:408468020357:secret:df-aws-access-keys*"
+        },
+
         {
           "Effect" : "Allow",
           "Action" : [

@@ -83,16 +83,7 @@ resource "aws_iam_role_policy" "codepipeline" {
             aws_codebuild_project.tf_apply.arn,
             aws_codebuild_project.tf_destroy.arn
           ]
-        },
-        # ---- THIS IS THE NEW BLOCK ADDED -----
-        {
-          "Effect" : "Allow",
-          "Action" : [
-            "secretsmanager:GetSecretValue"
-          ],
-          "Resource" : "arn:aws:secretsmanager:eu-west-1:408468020357:secret:df-aws-access-keys*"
         }
-        # --------------------------------------
       ]
     }
   )
