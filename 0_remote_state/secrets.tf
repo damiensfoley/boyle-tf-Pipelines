@@ -22,7 +22,7 @@ resource "aws_iam_role" "secrets_manager_access_role" {
     Statement = [{
       Effect = "Allow"
       Principal = {
-        AWS = "arn:aws:iam::408468020357:user/diosfcli"  # Replace with the actual principal allowed to assume this role
+        AWS = "arn:aws:sts::408468020357:assumed-role/df-tf-codebuild-pipeline-role"  # Replace with the actual principal allowed to assume this role
       }
       Action = "sts:AssumeRole"
     }]
