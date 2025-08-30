@@ -27,9 +27,7 @@ resource "aws_iam_role_policy" "codepipeline" {
       "Statement" : [
         {
           "Effect" : "Allow",
-          "Action" : [
-            "s3:*"
-          ],
+          "Action" : [ "s3:*" ],
           "Resource" : "*"
         },
         {
@@ -44,7 +42,7 @@ resource "aws_iam_role_policy" "codepipeline" {
             "codestar-connections:GetConnection",
             "appconfig:StartDeployment",
             "appconfig:GetDeployment",
-            "appconfig:StopDeployment",
+            "appconfig:StopDeployment"
           ],
           "Resource" : "*"
         },
@@ -65,7 +63,7 @@ resource "aws_iam_role_policy" "codepipeline" {
             "codecommit:List*",
             "codecommit:GitPull",
             "codecommit:UploadArchive",
-            "codecommit:GetBranch",
+            "codecommit:GetBranch"
           ],
           "Resource" : "*"
         },
@@ -85,7 +83,16 @@ resource "aws_iam_role_policy" "codepipeline" {
             aws_codebuild_project.tf_apply.arn,
             aws_codebuild_project.tf_destroy.arn
           ]
+        },
+        # ---- THIS IS THE NEW BLOCK ADDED -----
+        {
+          "Effect" : "Allow",
+          "Action" : [
+            "secretsmanager:GetSecretValue"
+          ],
+          "Resource" : "arn:aws:secretsmanager:eu-west-1:408468020357:secret:df-aws-access-keys*"
         }
+        # --------------------------------------
       ]
     }
   )
